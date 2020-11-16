@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Calcular a duração total do vídeo</title>
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css">
+  <style>.container { max-width: 50rem; }</style>
+  <script src="https://unpkg.com/vue"></script>
+</head>
+<body>
+  <div id="app" class="container my-5" v-cloak>
+    <h1 class="display-3 text-center">Calcular a duração total do vídeo</h1>
+    <div class="custom-file d-block my-3 mx-auto">
+      <input class="custom-file-input" id="file" type="file" multiple ref="input" @change="compute">
+      <label class="custom-file-label" for="file">Escolher o arquivo</label>
+    </div>
+    <ul class="list-group mx-auto" v-if="files.length">
+      <li class="list-group-item d-flex justify-content-between align-items-center" v-for="item in files">
+        <span class="text-truncate">{{item.name}}</span>
+        <small class="text-muted ml-3">{{item.duration | time}}</small>
+      </li>
+      <li class="list-group-item text-right">Total: <small>{{total | time}}</small></li>
+    </ul>
+  </div>
+  <script>
+    const vm = new Vue({
+      el: '#app',
+      data: {
+        files: [],
+        total: 0
+      },
+      methods: {
+        compute () {
+          const files = this.$refs.input.files
+          let total = 0
+          let i = file.files.length
+
+          for (let item of file.files) {
+            const video = new Audio(URL.createObjectURL(item))
+            video.onloadedmetadata = () => {
+              item.duration = video.duration
+              total += item.duration
+              if (!--i) {
+                this.total = total
+                this.files = files
+              }
+            }
+          }
+        }
+      },
+      filters: {
+        time (input) {
+          const h = Math.floor(input / 60 / 60)
+          const m = Math.floor(input / 60) % 60
+          const s = Math.floor(input % 60)
+          return `${h}:${m}:${s}`
+        }
+      }
+    })
+  </script>
+</body>
+</html>
